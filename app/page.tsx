@@ -35,8 +35,9 @@ export default function FocusTimerApp() {
             </div>
           </div>
         </header>
-
-        <TechniqueTabs onTabChange={handleTabChange} />
+        <div className="w-full flex flex-col items-center">
+          <TechniqueTabs onTabChange={handleTabChange} />
+        </div>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

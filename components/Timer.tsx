@@ -8,6 +8,7 @@ import { getTechnique } from '../lib/techniques';
 import TimerDisplay from '../components/TimerDisplay';
 import TimerControls from '../components/TimerControls';
 import SettingsModal from '../components/SettingsModal';
+import { playNotificationSound } from '@/lib/timerUtils';
 
 interface TimerProps {
   selectedTechnique: TechniqueType;
@@ -19,6 +20,7 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
     `timer-settings-${technique.id}`,
     technique.defaultSettings
   );
+  const [isMuted, setIsMuted] = useState(false);
 
   const [showSettings, setShowSettings] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -31,6 +33,11 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
     },
     onSessionComplete: () => {
       console.log('Session complete!');
+    },
+    onPlaySound: (type) => {
+      if (!isMuted) {
+        playNotificationSound(type);
+      }
     },
   });
 
@@ -105,6 +112,8 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
               onSkip={skip}
               onSettings={() => setShowSettings(true)}
               color={technique.color}
+              isMuted={isMuted}
+              onToggleMute={() => setIsMuted(!isMuted)}
             />
           </div>
 

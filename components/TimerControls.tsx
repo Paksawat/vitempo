@@ -6,6 +6,8 @@ import {
   Square,
   SkipForward,
   Settings,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { TimerStatus } from '@/types';
 
@@ -19,6 +21,8 @@ interface TimerControlsProps {
   onSkip: () => void;
   onSettings: () => void;
   color: string;
+  isMuted: boolean;
+  onToggleMute: () => void;
 }
 
 export default function TimerControls({
@@ -31,6 +35,8 @@ export default function TimerControls({
   onSkip,
   onSettings,
   color,
+  isMuted,
+  onToggleMute,
 }: TimerControlsProps) {
   return (
     <div className="flex flex-col items-center gap-6">
@@ -123,6 +129,22 @@ export default function TimerControls({
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Settings
           </span>
+        </button>
+        <button
+          onClick={onToggleMute}
+          className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          aria-label={
+            isMuted ? 'Unmute notification sounds' : 'Mute notification sounds'
+          }
+          title={
+            isMuted ? 'Unmute notification sounds' : 'Mute notification sounds'
+          }
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+          ) : (
+            <Volume2 className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+          )}
         </button>
       </div>
 

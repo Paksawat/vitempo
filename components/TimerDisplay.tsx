@@ -16,8 +16,6 @@ export default function TimerDisplay({ state, color }: TimerDisplayProps) {
   const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-  console.log(state);
-
   return (
     <div className="flex flex-col items-center justify-center transition-all duration-200 ease-linear">
       {/* Phase Indicator */}

@@ -39,9 +39,9 @@ export default function TechniqueTabs({ onTabChange }: TabsProps) {
   };
 
   return (
-    <div className="w-[calc(100%-8px)] md:min-w-2xl max-w-md mx-auto mt-10 overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 ">
+    <div className="w-[calc(100%-8px)] md:min-w-2xl max-w-md mt-10 overflow-x-auto scroll-smooth snap-x snap-mandatory mx-4 border-b border-gray-300 ">
       {/* Tab buttons */}
-      <div className="flex border-b border-gray-300 ">
+      <div className="flex ">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (

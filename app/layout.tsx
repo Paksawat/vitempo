@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'My PWA App',
+  title: 'Vitempo',
   description: 'My Progressive Web App',
   manifest: '/manifest.json',
 };

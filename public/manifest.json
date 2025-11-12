@@ -1,6 +1,6 @@
 {
-  "name": "My PWA App",
-  "short_name": "PWA App",
+  "name": "Vitempo",
+  "short_name": "Vitempo",
   "description": "My awesome Progressive Web App",
   "start_url": "/",
   "display": "standalone",

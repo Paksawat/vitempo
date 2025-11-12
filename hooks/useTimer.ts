@@ -11,7 +11,6 @@ import {
   getNextPhase,
   shouldAutoStart,
   updateDocumentTitle,
-  playNotificationSound,
 } from '@/lib/timerUtils';
 
 interface UseTimerProps {
@@ -19,6 +18,7 @@ interface UseTimerProps {
   settings: TechniqueSettings;
   onPhaseComplete?: (phase: TimerPhase) => void;
   onSessionComplete?: () => void;
+  onPlaySound?: (type: 'start' | 'break' | 'complete') => void;
 }
 
 interface UseTimerReturn {
@@ -36,6 +36,7 @@ export function useTimer({
   settings,
   onPhaseComplete,
   onSessionComplete,
+  onPlaySound,
 }: UseTimerProps): UseTimerReturn {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -99,8 +100,8 @@ export function useTimer({
 
           // Time's up - transition to next phase
           if (newTimeRemaining <= 0) {
-            playNotificationSound('complete');
             onPhaseComplete?.(prev.phase);
+            onPlaySound?.('complete');
 
             const nextPhase = getNextPhase(
               prev.phase,
@@ -164,7 +165,7 @@ export function useTimer({
         }
       };
     }
-  }, [state.status, settings, onPhaseComplete, onSessionComplete]);
+  }, [state.status, settings, onPhaseComplete, onSessionComplete, onPlaySound]);
 
   // Start timer
   const start = useCallback(() => {
@@ -183,8 +184,8 @@ export function useTimer({
       sessionStartTime: Date.now(),
       currentCycle: prev.phase === 'idle' ? 1 : prev.currentCycle,
     }));
-    playNotificationSound('start');
-  }, [settings.workDuration]);
+    onPlaySound?.('start');
+  }, [settings.workDuration, onPlaySound]);
 
   // Pause timer
   const pause = useCallback(() => {
