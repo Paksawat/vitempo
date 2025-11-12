@@ -16,21 +16,14 @@ export const TECHNIQUES: Record<TechniqueType, TechniqueConfig> = {
     hasCycles: true,
     isFlexible: false,
     defaultSettings: {
-      workDuration: 25, // minutes
-      shortBreakDuration: 5, // minutes
-      initialLongBreakDuration: 15, // minimum long break
+      workDuration: 25,
+      shortBreakDuration: 5,
+      initialLongBreakDuration: 15,
       longBreakDuration: 15,
-      maxLongBreakDuration: 30, // maximum long break
+      maxLongBreakDuration: 30,
       cyclesBeforeLongBreak: 4,
       autoStartBreaks: false,
       autoStartWork: false,
-    },
-    getLongBreakDuration(cycleSetsCompleted = 1) {
-      const { initialLongBreakDuration, maxLongBreakDuration } =
-        this.defaultSettings;
-      const increasedBreak =
-        initialLongBreakDuration + (cycleSetsCompleted - 1) * 5;
-      return Math.min(increasedBreak, maxLongBreakDuration);
     },
     instructions: [
       'Choose a task to work on',
@@ -213,8 +206,8 @@ export const TECHNIQUES: Record<TechniqueType, TechniqueConfig> = {
     hasCycles: false,
     isFlexible: true,
     defaultSettings: {
-      workDuration: 0, // User-determined
-      shortBreakDuration: 0, // User-determined
+      workDuration: 0,
+      shortBreakDuration: 0,
       longBreakDuration: 0,
       initialLongBreakDuration: 15,
       maxLongBreakDuration: 30,

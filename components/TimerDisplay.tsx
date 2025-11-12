@@ -13,13 +13,13 @@ interface TimerDisplayProps {
 
 export default function TimerDisplay({ state, color }: TimerDisplayProps) {
   const progress = calculateRemaining(state.timeRemaining, state.totalTime);
-  const circumference = 2 * Math.PI * 120; // radius = 120
+  const circumference = 2 * Math.PI * 120;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   console.log(state);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center transition-all duration-200 ease-linear">
       {/* Phase Indicator */}
       <div className="mb-8">
         <span
@@ -56,7 +56,7 @@ export default function TimerDisplay({ state, color }: TimerDisplayProps) {
             fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
-            className="transition-all duration-1000 ease-linear"
+            className="transition-all duration-200 ease-linear"
             strokeLinecap="round"
           />
         </svg>
@@ -64,7 +64,7 @@ export default function TimerDisplay({ state, color }: TimerDisplayProps) {
         {/* Timer Text in Center */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div
-            className="text-6xl md:text-7xl font-bold tabular-nums"
+            className="text-6xl md:text-7xl font-bold tabular-nums transition-all duration-200 ease-linear"
             style={{ color: color }}
           >
             {formatTime(state.timeRemaining, state.totalTime >= 3600)}

@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   TimerState,
-  TimerStatus,
   TimerPhase,
   TechniqueSettings,
   TechniqueType,
@@ -56,6 +55,21 @@ export function useTimer({
   }, [technique, settings]);
 
   const [state, setState] = useState<TimerState>(getInitialState);
+
+  // Reset timer
+  const reset = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    setState(getInitialState());
+  }, [getInitialState]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      reset();
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, [settings, technique, reset]);
 
   // Clear interval on unmount
   useEffect(() => {
@@ -192,14 +206,6 @@ export function useTimer({
 
   // Stop timer
   const stop = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    setState(getInitialState());
-  }, [getInitialState]);
-
-  // Reset timer
-  const reset = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }

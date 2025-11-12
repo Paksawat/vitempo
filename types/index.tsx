@@ -26,7 +26,6 @@ export interface TechniqueConfig {
   hasLongBreak: boolean;
   hasCycles?: boolean;
   isFlexible?: boolean;
-  getLongBreakDuration?: (cycleSetsCompleted?: number) => number;
 }
 
 export interface TechniqueSettings {

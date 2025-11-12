@@ -13,9 +13,6 @@ interface TimerProps {
   selectedTechnique: TechniqueType;
 }
 
-// Mock data - in real app, this would come from params
-const MOCK_TECHNIQUE: TechniqueType = 'pomodoro';
-
 export default function TimerPage({ selectedTechnique }: TimerProps) {
   const technique = getTechnique(selectedTechnique);
   const [settings, setSettings] = useLocalStorage<TechniqueSettings>(
@@ -72,9 +69,9 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col">
       {/* Hero Section */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-6 shrink-0">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
           {technique.name}{' '}
           <button
@@ -91,8 +88,8 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col items-center">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grow">
+        <div className="flex flex-col items-center min-h-[400px]">
           {/* Timer Display */}
           <TimerDisplay state={state} color={technique.color} />
 
