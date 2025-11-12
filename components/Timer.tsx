@@ -76,7 +76,7 @@ export default function TimerPage({ selectedTechnique }: TimerProps) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col">
+    <div className="min-h-screen bg-linear-to-br  flex flex-col">
       {/* Hero Section */}
       <div className="text-center mb-6 shrink-0">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
