@@ -3,244 +3,15 @@ import { useState } from 'react';
 import { Clock, Moon, Sun } from 'lucide-react';
 import TimerPage from '@/components/Timer';
 import TechniqueCard from '@/components/TechniqueCard';
-
-// ============================================================================
-// TYPES
-// ============================================================================
-type TechniqueType =
-  | 'pomodoro'
-  | '52-17'
-  | '90-minute'
-  | 'timebox'
-  | '10-minute'
-  | 'flowtime';
-
-type TimerPhase = 'work' | 'short-break' | 'long-break' | 'idle';
-type TimerStatus = 'idle' | 'running' | 'paused' | 'completed';
-
-interface TechniqueConfig {
-  id: TechniqueType;
-  name: string;
-  shortName: string;
-  description: string;
-  icon: string;
-  color: string;
-  bgColor: string;
-  defaultSettings: TechniqueSettings;
-  instructions: string[];
-  bestFor: string[];
-  hasLongBreak: boolean;
-}
-
-interface TechniqueSettings {
-  workDuration: number;
-  shortBreakDuration: number;
-  longBreakDuration: number;
-  cyclesBeforeLongBreak: number;
-  autoStartBreaks: boolean;
-  autoStartWork: boolean;
-}
-
-interface TimerState {
-  technique: TechniqueType;
-  status: TimerStatus;
-  phase: TimerPhase;
-  timeRemaining: number;
-  totalTime: number;
-  currentCycle: number;
-  totalCycles: number;
-}
-
-// ============================================================================
-// DATA
-// ============================================================================
-const TECHNIQUES: Record<TechniqueType, TechniqueConfig> = {
-  pomodoro: {
-    id: 'pomodoro',
-    name: 'Pomodoro Technique',
-    shortName: 'Pomodoro',
-    description: 'Work in 25-minute focused intervals with short breaks',
-    icon: '🍅',
-    color: '#EF4444',
-    bgColor: '#FEE2E2',
-    hasLongBreak: true,
-    defaultSettings: {
-      workDuration: 25,
-      shortBreakDuration: 5,
-      longBreakDuration: 15,
-      cyclesBeforeLongBreak: 4,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      'Choose a task to work on',
-      'Start the 25-minute timer',
-      'Work with full focus until the timer rings',
-      'Take a 5-minute break',
-      'After 4 pomodoros, take a 15-minute break',
-    ],
-    bestFor: [
-      'Breaking large tasks into manageable chunks',
-      'Maintaining consistent focus',
-      'Building sustainable work rhythm',
-    ],
-  },
-  '52-17': {
-    id: '52-17',
-    name: '52/17 Rule',
-    shortName: '52/17',
-    description: 'Work for 52 minutes, break for 17 minutes',
-    icon: '⏱️',
-    color: '#3B82F6',
-    bgColor: '#DBEAFE',
-    hasLongBreak: false,
-    defaultSettings: {
-      workDuration: 52,
-      shortBreakDuration: 17,
-      longBreakDuration: 0,
-      cyclesBeforeLongBreak: 0,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      'Start a 52-minute focused work session',
-      'Eliminate all distractions',
-      'Take a full 17-minute break',
-      'Use break time to truly disconnect',
-      'Repeat the cycle as needed',
-    ],
-    bestFor: [
-      'Deep work requiring extended concentration',
-      'Complex problem-solving',
-      'Creative flow states',
-    ],
-  },
-  '90-minute': {
-    id: '90-minute',
-    name: '90-Minute Focus Sessions',
-    shortName: '90-Min',
-    description: 'Deep work blocks aligned with ultradian rhythms',
-    icon: '🎯',
-    color: '#8B5CF6',
-    bgColor: '#EDE9FE',
-    hasLongBreak: false,
-    defaultSettings: {
-      workDuration: 90,
-      shortBreakDuration: 20,
-      longBreakDuration: 0,
-      cyclesBeforeLongBreak: 0,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      'Block out 90 minutes uninterrupted',
-      'Tackle your most challenging task',
-      'Work with maximum intensity',
-      'Take a full 20-minute recovery break',
-      'Limit to 2-3 sessions per day',
-    ],
-    bestFor: [
-      'Deep cognitive work',
-      'Writing or design projects',
-      'Tasks requiring sustained mental effort',
-    ],
-  },
-  timebox: {
-    id: 'timebox',
-    name: 'Time-Boxing',
-    shortName: 'Time-Box',
-    description: 'Allocate fixed time blocks to specific tasks',
-    icon: '📦',
-    color: '#10B981',
-    bgColor: '#D1FAE5',
-    hasLongBreak: false,
-    defaultSettings: {
-      workDuration: 30,
-      shortBreakDuration: 5,
-      longBreakDuration: 0,
-      cyclesBeforeLongBreak: 0,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      'Set a specific time limit for your task',
-      'Work only on that task during the time box',
-      'Stop when time is up',
-      'Take a short break',
-      'Review what you accomplished',
-    ],
-    bestFor: [
-      'Managing multiple small tasks',
-      'Preventing perfectionism',
-      'Improving time estimation',
-    ],
-  },
-  '10-minute': {
-    id: '10-minute',
-    name: '10-Minute Rule',
-    shortName: '10-Min',
-    description: 'Start with just 10 minutes to overcome procrastination',
-    icon: '🚀',
-    color: '#F59E0B',
-    bgColor: '#FEF3C7',
-    hasLongBreak: false,
-    defaultSettings: {
-      workDuration: 10,
-      shortBreakDuration: 5,
-      longBreakDuration: 0,
-      cyclesBeforeLongBreak: 0,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      "Choose a task you've been avoiding",
-      'Commit to just 10 minutes',
-      'Start immediately',
-      'After 10 minutes, decide to continue or break',
-      'Celebrate starting',
-    ],
-    bestFor: [
-      'Overcoming procrastination',
-      'Starting difficult tasks',
-      'Building momentum',
-    ],
-  },
-  flowtime: {
-    id: 'flowtime',
-    name: 'Flowtime Technique',
-    shortName: 'Flowtime',
-    description: 'Work until you naturally need a break',
-    icon: '🌊',
-    color: '#14B8A6',
-    bgColor: '#CCFBF1',
-    hasLongBreak: false,
-    defaultSettings: {
-      workDuration: 0,
-      shortBreakDuration: 0,
-      longBreakDuration: 0,
-      cyclesBeforeLongBreak: 0,
-      autoStartBreaks: false,
-      autoStartWork: false,
-    },
-    instructions: [
-      'Start working on your task',
-      'Track time without setting alarm',
-      'Stop when focus declines',
-      'Take proportional break',
-      'Use ~5:1 work-to-break ratio',
-    ],
-    bestFor: [
-      'Creative work requiring flow',
-      'When rigid timers feel disruptive',
-      'Variable attention span days',
-    ],
-  },
-};
+import { TECHNIQUES } from '@/lib/techniques';
+import { TechniqueType } from '@/types';
+import TechniqueTabs from '@/components/TechniqueTabs';
 
 // ============================================================================
 // MAIN APP
 // ============================================================================
 export default function FocusTimerApp() {
+  const [selectedTab, setSelectedTab] = useState<TechniqueType>('pomodoro');
   const [currentView, setCurrentView] = useState<'home' | 'timer'>('home');
   const [selectedTechnique, setSelectedTechnique] =
     useState<TechniqueType | null>(null);
@@ -248,6 +19,11 @@ export default function FocusTimerApp() {
   const handleStartTechnique = (techniqueId: TechniqueType) => {
     setSelectedTechnique(techniqueId);
     setCurrentView('timer');
+  };
+
+  const handleTabChange = (tabId: TechniqueType) => {
+    console.log('Active tab:', tabId);
+    setSelectedTab(tabId);
   };
 
   const techniques = Object.values(TECHNIQUES);
@@ -265,20 +41,19 @@ export default function FocusTimerApp() {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Focus Timer
+                    Vitempo
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    6 productivity techniques in one app
-                  </p>
                 </div>
               </div>
             </div>
           </div>
         </header>
 
+        <TechniqueTabs onTabChange={handleTabChange} />
+
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <TimerPage />
+          <TimerPage selectedTechnique={selectedTab} />
         </main>
 
         {/* Footer */}

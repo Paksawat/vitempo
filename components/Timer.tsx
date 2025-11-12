@@ -1,8 +1,7 @@
 // Main timer component
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Home, Info } from 'lucide-react';
-import { TechniqueType, TechniqueSettings, TechniqueConfig } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Info } from 'lucide-react';
+import { TechniqueType, TechniqueSettings } from '../types';
 import { useTimer } from '../hooks/useTimer';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { getTechnique } from '../lib/techniques';
@@ -10,11 +9,15 @@ import TimerDisplay from '../components/TimerDisplay';
 import TimerControls from '../components/TimerControls';
 import SettingsModal from '../components/SettingsModal';
 
-// Mock data - in real app, this would come from params
-const MOCK_TECHNIQUE: TechniqueType = '52-17';
+interface TimerProps {
+  selectedTechnique: TechniqueType;
+}
 
-export default function TimerPage() {
-  const technique = getTechnique(MOCK_TECHNIQUE);
+// Mock data - in real app, this would come from params
+const MOCK_TECHNIQUE: TechniqueType = 'pomodoro';
+
+export default function TimerPage({ selectedTechnique }: TimerProps) {
+  const technique = getTechnique(selectedTechnique);
   const [settings, setSettings] = useLocalStorage<TechniqueSettings>(
     `timer-settings-${technique.id}`,
     technique.defaultSettings
@@ -65,52 +68,27 @@ export default function TimerPage() {
 
   const handleSaveSettings = (newSettings: TechniqueSettings) => {
     setSettings(newSettings);
-    reset(); // Reset timer with new settings
+    reset();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          Choose Your Focus Method
+          {technique.name}{' '}
+          <button
+            onClick={() => setShowInfo(!showInfo)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="Show instructions"
+          >
+            <Info className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+          </button>
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Select from six proven time management techniques. Each one is
-          tailored for different types of work and energy levels.
+          {technique.description}
         </p>
       </div>
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => window.history.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                aria-label="Go home"
-              >
-                <Home className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              </button>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {technique.icon} {technique.shortName}
-                </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {technique.description}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowInfo(!showInfo)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              aria-label="Show instructions"
-            >
-              <Info className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-            </button>
-          </div>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -144,7 +122,7 @@ export default function TimerPage() {
                   {technique.instructions.map((instruction, index) => (
                     <li key={index} className="flex gap-3">
                       <span
-                        className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                        className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
                         style={{ backgroundColor: technique.color }}
                       >
                         {index + 1}
@@ -189,17 +167,6 @@ export default function TimerPage() {
         settings={settings}
         onSave={handleSaveSettings}
       />
-
-      {/* Demo Note */}
-      <div className="fixed bottom-4 left-4 right-4 max-w-sm mx-auto">
-        <div className="bg-indigo-600 text-white text-xs p-3 rounded-lg shadow-lg">
-          <p className="font-medium mb-1">🚀 MVP Demo</p>
-          <p className="opacity-90">
-            This is a demo of the timer page. The full app would have navigation
-            between all 6 techniques.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

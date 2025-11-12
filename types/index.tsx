@@ -25,13 +25,16 @@ export interface TechniqueConfig {
   bestFor: string[];
   hasLongBreak: boolean;
   hasCycles?: boolean;
-  isFlexible?: boolean; // For flowtime
+  isFlexible?: boolean;
+  getLongBreakDuration?: (cycleSetsCompleted?: number) => number;
 }
 
 export interface TechniqueSettings {
-  workDuration: number; // minutes
+  workDuration: number;
   shortBreakDuration: number;
   longBreakDuration: number;
+  initialLongBreakDuration: number;
+  maxLongBreakDuration: number;
   cyclesBeforeLongBreak: number;
   autoStartBreaks: boolean;
   autoStartWork: boolean;
