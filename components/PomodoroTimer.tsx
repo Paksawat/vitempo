@@ -66,17 +66,6 @@ export default function PomodoroTimer({ data }: PomodoroTimerProps) {
     <div className="min-h-screen bg-linear-to-br  flex flex-col">
       <TimerHeader title={data.name} description={data.description} />
       <div className="flex flex-col items-center justify-center transition-all duration-200 ease-linear mb-8">
-        {/* Phase Indicator */}
-        <span
-          className="inline-block px-6 py-2 rounded-full text-sm font-medium mt-8"
-          style={{
-            backgroundColor: `${data.color}20`,
-            color: data.color,
-          }}
-        >
-          {state}
-        </span>
-
         {/* Circular Progress */}
         <div className="relative w-80 h-80">
           {/* Background Circle */}
@@ -107,6 +96,17 @@ export default function PomodoroTimer({ data }: PomodoroTimerProps) {
 
           {/* Timer Text in Center */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
+            {/* Phase Indicator */}
+            <span
+              className="inline-block px-6 py-2 rounded-full text-sm font-medium mb-2"
+              style={{
+                backgroundColor: `${data.color}20`,
+                color: data.color,
+              }}
+            >
+              {state}
+            </span>
+
             <div
               className="text-6xl font-bold tabular-nums transition-all duration-200 ease-linear"
               style={{ color: data.color }}

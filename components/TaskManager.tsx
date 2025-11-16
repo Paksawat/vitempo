@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TaskItem from './TaskItem';
+import { X, SquarePlus } from 'lucide-react';
 
 export interface Task {
   id: string;
@@ -34,6 +35,8 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
 
   const currentTask = tasks.find((t) => t.id === currentTaskId);
   const isCurrentTaskValid = currentTask && !isTaskComplete(currentTask);
+
+  const [showNewTaskForm, setShowNewTaskForm] = useState(false);
 
   const effectiveCurrentTaskId = isCurrentTaskValid
     ? currentTaskId
@@ -81,6 +84,9 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
   }
 
   function startEdit(task: Task) {
+    if (showNewTaskForm) {
+      setShowNewTaskForm(false); // close new task form if open
+    }
     setEditingTaskId(task.id);
     setEditTitle(task.title);
     setEditEstCycles(task.estCycles);
@@ -102,6 +108,24 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
 
   function cancelEdit() {
     setEditingTaskId(null);
+  }
+
+  // New helper to open new task form with edit check
+  function tryOpenNewTaskForm() {
+    if (editingTaskId !== null) {
+      const confirmResult = window.confirm(
+        'You have unsaved changes. Save changes before adding a new task?'
+      );
+      if (confirmResult) {
+        saveEdit();
+        setShowNewTaskForm(true);
+      } else {
+        cancelEdit();
+        setShowNewTaskForm(true);
+      }
+    } else {
+      setShowNewTaskForm(true);
+    }
   }
 
   function handleDragStart(taskId: string) {
@@ -168,9 +192,8 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
   const displayCurrentTask = tasks.find((t) => t.id === effectiveCurrentTaskId);
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="mx-auto max-w-[500px] min-w-[350px] w-full px-4 over">
       <h2 className="text-xl font-bold mb-4">Tasks</h2>
-
       {/* Current Task Field */}
       <div
         onDragOver={handleCurrentTaskDragOver}
@@ -210,10 +233,11 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
                 />
               )}
             </div>
+            <span className="h-px my-4 block border-t dark:border-slate-600"></span>
           </>
         )}
       </div>
-      <span className="h-px my-4 block border-t dark:border-slate-600"></span>
+
       {/* Tasks List */}
       <ul className="space-y-2 w-full">
         {tasks
@@ -247,30 +271,74 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
             );
           })}
       </ul>
-      <span className="h-px my-4 block border-t dark:border-slate-600"></span>
-      {/* New Task Form */}
-      <div className="mb-4 flex gap-2 dark:bg-slate-800 ">
-        <input
-          type="text"
-          placeholder="Task Title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="grow rounded px-2 py-1"
-        />
-        <input
-          type="number"
-          min={1}
-          value={newEstCycles}
-          onChange={(e) => setNewEstCycles(Number(e.target.value))}
-          className="w-20 rounded px-2 py-1"
-        />
-        <button
-          onClick={addTask}
-          className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+
+      {/* Add Task Toggle Box */}
+      {!showNewTaskForm && (
+        <div
+          onClick={tryOpenNewTaskForm}
+          className="cursor-pointer px-4 py-2 mb-4 rounded flex gap-2 justify-center dark:text-slate-500 font-semibold  select-none mt-4 border border-dashed dark:border-slate-500"
         >
-          Add
-        </button>
-      </div>
+          <SquarePlus /> <p>Add Task</p>
+        </div>
+      )}
+
+      {/* New Task Form */}
+      {showNewTaskForm && (
+        <>
+          <div className="flex w-full flex-col gap-2 rounded dark:bg-slate-800 dark:text-slate-400 p-3 mt-4">
+            <div
+              onClick={() => setShowNewTaskForm(false)}
+              className="flex justify-between align-middle cursor-pointer"
+            >
+              <p className="text-sm font-medium">Add new task</p>
+              <X size={16} className="dark:text-slate-500" />
+            </div>
+            {/* Close Button */}
+            <textarea
+              placeholder="Task title"
+              value={newTitle}
+              onChange={(e) => {
+                setNewTitle(e.target.value);
+
+                // auto-resize
+                e.target.style.height = 'auto';
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              rows={1}
+              className="rounded py-1 font-semibold focus:outline-none resize-none overflow-hidden leading-tight"
+            ></textarea>
+
+            <div className="flex items-center">
+              <label className="font-medium mr-4">Est. cycles</label>
+              <select
+                value={newEstCycles}
+                onChange={(e) => setNewEstCycles(Number(e.target.value))}
+                className="w-12 rounded px-2 py-1 border-none focus:outline-none center dark:text-slate-400 dark:bg-slate-700"
+              >
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <option
+                    key={num}
+                    value={num}
+                    className="dark:bg-slate-800 dark:hover:bg-slate-700"
+                  >
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={() => {
+                addTask();
+                setShowNewTaskForm(false);
+              }}
+              className="dark:bg-slate-700 text-white px-4 py-1 rounded dark:hover:bg-slate-600 cursor-pointer mt-1"
+            >
+              Add
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

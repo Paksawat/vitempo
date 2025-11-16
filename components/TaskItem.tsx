@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Task } from './TaskManager';
-import { GripVertical, Trash2, Circle, CircleCheck } from 'lucide-react';
+import { GripVertical, Trash2, Circle, CircleCheck, X } from 'lucide-react';
 
 interface TaskItemProps {
   task: Task;
@@ -42,51 +42,76 @@ export default function TaskItem({
   onToggleComplete,
 }: TaskItemProps) {
   const isEditing = editingTaskId === task.id;
+  const editRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (isEditing && editRef.current) {
+      editRef.current.style.height = 'auto';
+      editRef.current.style.height = `${editRef.current.scrollHeight}px`;
+    }
+  }, [isEditing]);
 
   if (isEditing) {
     return (
-      <div className="flex w-full flex-col gap-2 rounded dark:bg-gray-300 dark:text-slate-600 ">
-        <input
-          type="text"
+      <div className="flex w-full flex-col gap-2 rounded dark:bg-slate-800 dark:text-slate-400 p-3">
+        {/* Header: Edit + Close button */}
+        <div className="flex justify-between items-center">
+          <p className="text-sm font-medium">Edit task</p>
+          <button onClick={onCancelEdit} className="cursor-pointer">
+            <X size={16} className="dark:text-slate-500" />
+          </button>
+        </div>
+
+        {/* Title input (textarea auto-size) */}
+        <textarea
+          ref={editRef}
+          placeholder="Task title"
           value={editTitle}
-          onChange={(e) => onEditTitleChange(e.target.value)}
-          className="border rounded px-2 py-1 font-semibold"
-          autoFocus
+          onChange={(e) => {
+            onEditTitleChange(e.target.value);
+
+            // auto-grow
+            e.target.style.height = 'auto';
+            e.target.style.height = `${e.target.scrollHeight}px`;
+          }}
+          rows={1}
+          className="rounded py-1 font-semibold focus:outline-none resize-none overflow-hidden leading-tight"
         />
 
-        <div className="flex gap-2 p-2 justify-between">
-          <div>
-            <label htmlFor="">cycles:</label>
-            <input
-              type="number"
-              min={1}
-              value={editEstCycles}
-              onChange={(e) => onEditEstCyclesChange(Number(e.target.value))}
-              className="w-24 border rounded px-2 py-1"
-            />
-          </div>
-          <div>
-            <button
-              onClick={onCancelEdit}
-              className="dark:text-gray-500 px-3 py-1 rounded hover:text-gray-400 cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onSaveEdit}
-              className="dark:bg-slate-600 text-white px-3 py-1 rounded dark:hover:bg-slate-500 cursor-pointer"
-            >
-              Save
-            </button>
-          </div>
+        {/* Cycles selector */}
+        <div className="flex items-center">
+          <label className="font-medium mr-4">Est. cycles</label>
+          <select
+            value={editEstCycles}
+            onChange={(e) => onEditEstCyclesChange(Number(e.target.value))}
+            className="w-12 rounded px-2 py-1 border-none focus:outline-none dark:text-slate-400 dark:bg-slate-700"
+          >
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+              <option
+                key={num}
+                value={num}
+                className="dark:bg-slate-800 dark:hover:bg-slate-700"
+              >
+                {num}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {/* Save button */}
+        <button
+          onClick={onSaveEdit}
+          className="dark:bg-slate-700 text-white px-4 py-1 rounded dark:hover:bg-slate-600 mt-1"
+        >
+          Save
+        </button>
       </div>
     );
   }
 
   return (
     <div
-      className={`flex w-full items-center justify-between  hover:bg-gray-200 dark:hover:bg-gray-700  select-none pl-4 bg-gray-100 rounded-md ${
+      className={`flex items-center justify-between w-full hover:bg-gray-200 dark:hover:bg-gray-700  select-none pl-4 dark:bg-slate-800 rounded-md ${
         isDragged ? 'opacity-70' : ''
       } ${
         isComplete
@@ -139,18 +164,18 @@ export default function TaskItem({
         aria-label="Toggle complete"
       >
         {isComplete ? (
-          <CircleCheck size={22} className="text-green-600" />
+          <CircleCheck size={22} className="text-green-700" />
         ) : (
           <Circle size={22} className="text-gray-500" />
         )}
       </button>
       {/* Task info */}
-      <div className="flex flex-col grow">
+      <div className="flex flex-col grow min-w-0 pr-2 py-2">
         <span
-          className={`font-semibold ${
+          className={`font-semibold text-sm md:text-base wrap-break-word whitespace-normal ${
             isComplete
-              ? 'line-through dark:text-gray-500'
-              : 'dark:text-slate-600 '
+              ? 'line-through dark:text-slate-600'
+              : 'dark:text-slate-400 '
           } ${isCurrent ? 'text-green-700' : ''}`}
         >
           {task.title}
@@ -158,7 +183,7 @@ export default function TaskItem({
       </div>
 
       {/* Delete button - hidden if complete */}
-      <span className="text-sm text-gray-600">
+      <span className="text-sm dark:text-slate-400 min-w-[35px] text-center">
         {task.completedCycles} / {task.estCycles}
       </span>
       <button
@@ -167,7 +192,7 @@ export default function TaskItem({
           onDelete(task.id);
         }}
         aria-label="Delete task"
-        className="text-red-600 hover:text-red-800 font-bold text-lg px-2 mx-2 cursor-pointer"
+        className="text-red-800 hover:text-red-700 font-bold text-lg px-2 mx-2 cursor-pointer"
         title="Delete task"
         type="button"
       >
@@ -177,7 +202,7 @@ export default function TaskItem({
       {/* Drag handle - hidden if complete */}
       {!isComplete && (
         <span
-          className="drag-handle cursor-move h-full text-gray-600 hover:text-gray-900 flex items-center dark:bg-gray-200 px-2 rounded-r-md relative -right-px"
+          className="drag-handle cursor-move h-full text-gray-600 hover:text-gray-900 flex items-center dark:bg-slate-700 px-2 rounded-r-md relative -right-px"
           title="Drag to reorder or move to current task"
           aria-label="Drag handle"
         >
