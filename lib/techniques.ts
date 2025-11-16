@@ -16,9 +16,9 @@ export const TECHNIQUES: Record<TechniqueType, TechniqueConfig> = {
     hasCycles: true,
     isFlexible: false,
     defaultSettings: {
-      workDuration: 25,
-      shortBreakDuration: 5,
-      initialLongBreakDuration: 15,
+      workDuration: 1000,
+      shortBreakDuration: 1000,
+      initialLongBreakDuration: 900000,
       longBreakDuration: 15,
       maxLongBreakDuration: 30,
       cyclesBeforeLongBreak: 4,

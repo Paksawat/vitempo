@@ -1,20 +1,24 @@
 'use client';
-import { useState } from 'react';
-import { Clock } from 'lucide-react';
-import TimerPage from '@/components/Timer';
-import { TechniqueType } from '@/types';
+import PomodoroTimer from '@/components/PomodoroTimer';
 import TechniqueTabs from '@/components/TechniqueTabs';
+import { TECHNIQUES } from '@/lib/techniques';
+import { TechniqueType } from '@/types';
+import { Clock } from 'lucide-react';
+import { useState } from 'react';
 
 // ============================================================================
 // MAIN APP
 // ============================================================================
+
 export default function FocusTimerApp() {
-  const [selectedTab, setSelectedTab] = useState<TechniqueType>('pomodoro');
+  const [selectedTechnique, setSelectedTechnique] = useState(
+    TECHNIQUES['pomodoro']
+  );
 
   const handleTabChange = (tabId: TechniqueType) => {
-    setSelectedTab(tabId);
+    const technique = TECHNIQUES[tabId]; // ← lookup actual config
+    setSelectedTechnique(technique);
   };
-
   return (
     <div>
       <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
@@ -41,7 +45,7 @@ export default function FocusTimerApp() {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <TimerPage selectedTechnique={selectedTab} />
+          <PomodoroTimer data={selectedTechnique} />
         </main>
       </div>
     </div>

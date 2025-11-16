@@ -3,16 +3,15 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Square,
   SkipForward,
-  Settings,
   Volume2,
   VolumeX,
 } from 'lucide-react';
 import { TimerStatus } from '@/types';
+import { useEffect } from 'react';
 
 interface TimerControlsProps {
-  status: TimerStatus;
+  status?: TimerStatus;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -30,14 +29,42 @@ export default function TimerControls({
   onStart,
   onPause,
   onResume,
-  onStop,
   onReset,
   onSkip,
-  onSettings,
   color,
   isMuted,
   onToggleMute,
 }: TimerControlsProps) {
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        // Ignore key presses inside inputs or textareas
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault(); // Prevent page scroll on space
+        if (status === 'idle') onStart();
+        else if (status === 'running') onPause();
+        else if (status === 'paused') onResume();
+      } else if (e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        onReset();
+      } else if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        onToggleMute();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [status, onStart, onPause, onResume, onReset, onToggleMute]);
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Main Control Buttons */}
@@ -77,7 +104,7 @@ export default function TimerControls({
         )}
 
         {/* Stop Button (when running or paused) */}
-        {(status === 'running' || status === 'paused') && (
+        {/* {(status === 'running' || status === 'paused') && (
           <button
             onClick={onStop}
             className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
@@ -88,7 +115,7 @@ export default function TimerControls({
               fill="currentColor"
             />
           </button>
-        )}
+        )} */}
       </div>
 
       {/* Secondary Controls */}
@@ -106,7 +133,7 @@ export default function TimerControls({
         </button>
 
         {/* Skip Button (when running or paused) */}
-        {(status === 'running' || status === 'paused') && (
+        {(status === 'running' || status === 'paused' || status == 'idle') && (
           <button
             onClick={onSkip}
             className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors"
@@ -120,7 +147,7 @@ export default function TimerControls({
         )}
 
         {/* Settings Button */}
-        <button
+        {/*  <button
           onClick={onSettings}
           className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors"
           aria-label="Open settings"
@@ -129,7 +156,7 @@ export default function TimerControls({
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Settings
           </span>
-        </button>
+        </button> */}
         <button
           onClick={onToggleMute}
           className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"

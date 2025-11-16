@@ -20,7 +20,16 @@ export interface TechniqueConfig {
   icon: string;
   color: string;
   bgColor: string;
-  defaultSettings: TechniqueSettings;
+  defaultSettings: {
+    workDuration: number;
+    shortBreakDuration: number;
+    initialLongBreakDuration: number;
+    longBreakDuration: number;
+    maxLongBreakDuration: number;
+    cyclesBeforeLongBreak: number;
+    autoStartBreaks: boolean;
+    autoStartWork: boolean;
+  };
   instructions: string[];
   bestFor: string[];
   hasLongBreak: boolean;
