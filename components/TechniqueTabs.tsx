@@ -90,12 +90,14 @@ export default function TechniqueTabs({ onTabChange }: TabsProps) {
                 isActive
                   ? 'font-semibold'
                   : tab.locked
-                  ? 'text-slate-600 cursor-default'
+                  ? 'dark:text-slate-600 text-gray-400 cursor-default'
                   : 'text-gray-500  bg-transparent cursor-pointer'
               }`}
             >
               <span>{tab.label}</span>
-              {tab.locked && <Lock className="w-4 h-4 text-slate-600" />}
+              {tab.locked && (
+                <Lock className="w-4 h-4 dark:text-slate-600 text-gray-400" />
+              )}
             </button>
           );
         })}
