@@ -11,13 +11,17 @@ export interface Task {
 
 interface TaskManagerProps {
   currentCycle: number;
+  autoCheckTasksOnCompletion: boolean;
 }
 
 function isTaskComplete(task: Task): boolean {
   return task.completedCycles >= task.estCycles;
 }
 
-export default function TaskManager({ currentCycle }: TaskManagerProps) {
+export default function TaskManager({
+  currentCycle,
+  autoCheckTasksOnCompletion,
+}: TaskManagerProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
 
@@ -43,7 +47,12 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
     : tasks.find((task) => !isTaskComplete(task))?.id || null;
 
   useEffect(() => {
-    if (currentCycle > prevCycleRef.current && effectiveCurrentTaskId) {
+    // Only auto-increment completedCycles if autoCheckTasksOnCompletion is enabled
+    if (
+      autoCheckTasksOnCompletion &&
+      currentCycle > prevCycleRef.current &&
+      effectiveCurrentTaskId
+    ) {
       setTasks((tasks) =>
         tasks.map((task) =>
           task.id === effectiveCurrentTaskId
@@ -59,7 +68,7 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
       );
     }
     prevCycleRef.current = currentCycle;
-  }, [currentCycle, effectiveCurrentTaskId]);
+  }, [currentCycle, effectiveCurrentTaskId, autoCheckTasksOnCompletion]);
 
   function addTask() {
     if (!newTitle.trim()) return alert('Task title is required');
@@ -340,7 +349,7 @@ export default function TaskManager({ currentCycle }: TaskManagerProps) {
                 addTask();
                 setShowNewTaskForm(false);
               }}
-              className="dark:bg-slate-700 text-slate-700 bg-slate-300 px-4 py-1 rounded dark:hover:bg-slate-600 cursor-pointer mt-1"
+              className="dark:bg-slate-700 dark:text-slate-200 text-slate-700 bg-slate-300 px-4 py-1 rounded dark:hover:bg-slate-600 cursor-pointer mt-1"
             >
               Add
             </button>

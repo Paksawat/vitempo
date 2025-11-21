@@ -57,6 +57,45 @@ export function secondsToMinutes(seconds: number): number {
 }
 
 /**
+ * Convert milliseconds to minutes
+ */
+export function msToMinutes(ms: number): number {
+  return Math.floor(ms / (60 * 1000));
+}
+
+/**
+ * Convert minutes to milliseconds
+ */
+export function minutesToMs(minutes: number): number {
+  return minutes * 60 * 1000;
+}
+
+/**
+ * Convert milliseconds to seconds
+ */
+export function msToSeconds(ms: number): number {
+  return Math.floor(ms / 1000);
+}
+
+/**
+ * Convert seconds to milliseconds
+ */
+export function secondsToMs(seconds: number): number {
+  return seconds * 1000;
+}
+
+/**
+ * Format milliseconds into MM:SS or HH:MM:SS
+ */
+export function formatTimeFromMs(
+  ms: number,
+  showHours: boolean = false
+): string {
+  const seconds = msToSeconds(ms);
+  return formatTime(seconds, showHours);
+}
+
+/**
  * Calculate progress percentage
  */
 export function calculateProgress(elapsed: number, total: number): number {

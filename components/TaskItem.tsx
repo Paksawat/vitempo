@@ -113,11 +113,11 @@ export default function TaskItem({
 
   return (
     <div
-      className={`flex items-center justify-between w-full select-none pl-4 dark:bg-slate-800 rounded-md ${
+      className={`flex items-center justify-between w-full select-none pl-4 dark:bg-slate-700 rounded-md ${
         isDragged ? 'opacity-70' : ''
       } ${
         isComplete
-          ? ' cursor-default dark:bg-slate-700 bg-slate-200 dark:hover:bg-slate-700 hover:bg-slate-300'
+          ? ' cursor-default dark:bg-slate-800 bg-slate-200 dark:hover:bg-slate-700 hover:bg-slate-300'
           : 'cursor-pointer dark:bg-gray-300 bg-slate-200 dark:hover:bg-gray-700 hover:bg-slate-300'
       }`}
       onClick={(e) => {

@@ -3,9 +3,8 @@ import PomodoroTimer from '@/components/PomodoroTimer';
 import TechniqueTabs from '@/components/TechniqueTabs';
 import { TECHNIQUES } from '@/lib/techniques';
 import { TechniqueType } from '@/types';
-import { Clock } from 'lucide-react';
 import { useState } from 'react';
-import logo from '@/app/assets/logo.svg';
+import logo from '@/assets/logo.svg';
 import Image from 'next/image';
 // ============================================================================
 // MAIN APP

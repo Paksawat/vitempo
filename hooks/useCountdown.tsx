@@ -1,10 +1,17 @@
 import { playNotificationSound } from '@/lib/playNotificationSound';
 import { useEffect, useRef, useState } from 'react';
 
-export function useCountdown(workMs: number, breakMs: number) {
+export function useCountdown(
+  workMs: number,
+  breakMs: number,
+  autoStartBreaks: boolean = false,
+  autoStartWork: boolean = false
+) {
   const workSeconds = Math.floor(workMs / 1000);
   const breakSeconds = Math.floor(breakMs / 1000);
 
+  // Initialize with the provided values (which should be from localStorage on client)
+  // Use a function to ensure we get the latest workSeconds value
   const [seconds, setSeconds] = useState(workSeconds);
   const [running, setRunning] = useState(false);
   const [isWorkTime, setIsWorkTime] = useState(true);
@@ -16,6 +23,9 @@ export function useCountdown(workMs: number, breakMs: number) {
   const cycleRef = useRef(cycle);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasIncrementedRef = useRef(false); // Track if we've already incremented
+  const autoStartBreaksRef = useRef(autoStartBreaks);
+  const autoStartWorkRef = useRef(autoStartWork);
+  const shouldAutoStartRef = useRef(false); // Flag to trigger auto-start
 
   useEffect(() => {
     isWorkTimeRef.current = isWorkTime;
@@ -24,6 +34,46 @@ export function useCountdown(workMs: number, breakMs: number) {
   useEffect(() => {
     cycleRef.current = cycle;
   }, [cycle]);
+
+  // Update auto-start refs when settings change
+  useEffect(() => {
+    autoStartBreaksRef.current = autoStartBreaks;
+    autoStartWorkRef.current = autoStartWork;
+  }, [autoStartBreaks, autoStartWork]);
+
+  // Handle auto-start after phase transitions
+  useEffect(() => {
+    if (shouldAutoStartRef.current && !running) {
+      shouldAutoStartRef.current = false;
+      if (isWorkTime && autoStartWorkRef.current) {
+        setRunning(true);
+      } else if (!isWorkTime && autoStartBreaksRef.current) {
+        setRunning(true);
+      }
+    }
+  }, [isWorkTime, running]);
+
+  // Update seconds when workMs/breakMs change (when not running)
+  // This ensures the display reflects the current settings immediately, including on initial load
+  // This is critical for showing localStorage settings on page load and when settings change
+  useEffect(() => {
+    if (!running) {
+      if (isWorkTime) {
+        setSeconds(workSeconds);
+      } else {
+        setSeconds(breakSeconds);
+      }
+    }
+  }, [workSeconds, breakSeconds, isWorkTime, running]);
+
+  // Force immediate update on mount to ensure localStorage settings are reflected
+  // This handles the case where the hook initializes before localStorage values are fully applied
+  useEffect(() => {
+    if (!running && isWorkTime) {
+      setSeconds(workSeconds);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const start = () => {
     setRunning(true);
@@ -56,6 +106,11 @@ export function useCountdown(workMs: number, breakMs: number) {
 
       playNotificationSound('break');
       setSeconds(cycleRef.current < 5 ? breakSeconds : breakSeconds * 3);
+
+      // Set flag to auto-start break if enabled
+      if (autoStartBreaksRef.current) {
+        shouldAutoStartRef.current = true;
+      }
     } else {
       // Skipping break → go to work (increment cycle)
       const nextCycle = cycleRef.current + 1;
@@ -66,6 +121,11 @@ export function useCountdown(workMs: number, breakMs: number) {
       playNotificationSound('start');
       setSeconds(workSeconds);
       hasIncrementedRef.current = false; // Reset for next work session
+
+      // Set flag to auto-start work if enabled
+      if (autoStartWorkRef.current) {
+        shouldAutoStartRef.current = true;
+      }
     }
   };
 
@@ -87,6 +147,12 @@ export function useCountdown(workMs: number, breakMs: number) {
             setIsWorkTime(false);
             setState(cycleRef.current < 5 ? 'Short break' : 'Long break');
             playNotificationSound('break');
+
+            // Set flag to auto-start break if enabled
+            if (autoStartBreaksRef.current) {
+              shouldAutoStartRef.current = true;
+            }
+
             return cycleRef.current < 5 ? breakSeconds : breakSeconds * 3;
           } else {
             // Break ended → switch to next cycle work
@@ -98,6 +164,12 @@ export function useCountdown(workMs: number, breakMs: number) {
 
             playNotificationSound('start');
             hasIncrementedRef.current = false; // Reset for next work session
+
+            // Set flag to auto-start work if enabled
+            if (autoStartWorkRef.current) {
+              shouldAutoStartRef.current = true;
+            }
+
             return workSeconds;
           }
         }
@@ -106,7 +178,7 @@ export function useCountdown(workMs: number, breakMs: number) {
     }, 1000);
 
     return () => clearInterval(intervalRef.current!);
-  }, [running, breakSeconds, workSeconds]);
+  }, [running, breakSeconds, workSeconds, autoStartBreaks, autoStartWork]);
 
   const formatted = (() => {
     const mins = Math.floor(seconds / 60);

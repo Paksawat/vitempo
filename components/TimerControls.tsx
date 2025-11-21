@@ -6,6 +6,7 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
+  Settings,
 } from 'lucide-react';
 import { TimerStatus } from '@/types';
 import { useEffect } from 'react';
@@ -31,6 +32,7 @@ export default function TimerControls({
   onResume,
   onReset,
   onSkip,
+  onSettings,
   color,
   isMuted,
   onToggleMute,
@@ -147,16 +149,16 @@ export default function TimerControls({
         )}
 
         {/* Settings Button */}
-        {/*  <button
+        <button
           onClick={onSettings}
-          className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors"
+          className="px-4 py-2 rounded-lg bg-slate-200 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors cursor-pointer"
           aria-label="Open settings"
         >
           <Settings className="w-4 h-4 text-gray-700 dark:text-gray-300" />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Settings
           </span>
-        </button> */}
+        </button>
         <button
           onClick={onToggleMute}
           className="w-12 h-12 rounded-full bg-slate-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
