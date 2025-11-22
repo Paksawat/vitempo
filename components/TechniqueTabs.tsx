@@ -1,7 +1,7 @@
 'use client';
 import { TechniqueType } from '@/types';
 import { useState } from 'react';
-import { Lock } from 'lucide-react'; // Import lucide lock icon
+import { Lock } from 'lucide-react'; 
 
 interface TabsProps {
   onTabChange?: (tabId: TechniqueType) => void;
@@ -15,7 +15,7 @@ export default function TechniqueTabs({ onTabChange }: TabsProps) {
     label: string;
     color: string;
     bgColor: string;
-    locked?: boolean; // add locked flag
+    locked?: boolean; 
   }[] = [
     {
       id: 'pomodoro',
@@ -25,46 +25,18 @@ export default function TechniqueTabs({ onTabChange }: TabsProps) {
       locked: false,
     },
     {
-      id: '52-17',
-      label: '52-17',
-      color: '#3B82F6',
-      bgColor: '#DBEAFE',
-      locked: true,
-    },
-    {
-      id: '90-minute',
-      label: '90-minute',
-      color: '#8B5CF6',
-      bgColor: '#EDE9FE',
-      locked: true,
-    },
-    {
-      id: 'timebox',
-      label: 'timebox',
-      color: '#10B981',
-      bgColor: '#D1FAE5',
-      locked: true,
-    },
-    {
-      id: '10-minute',
-      label: '10-minute',
-      color: '#F59E0B',
-      bgColor: '#FEF3C7',
-      locked: true,
-    },
-    {
       id: 'flowtime',
       label: 'flowtime',
       color: '#14B8A6',
       bgColor: '#CCFBF1',
-      locked: true,
+      locked: false,
     },
   ];
 
   const handleTabClick = (tabId: TechniqueType, locked: boolean = false) => {
-    if (locked) return; // prevent clicking locked tabs
+    if (locked) return;
     setActiveTab(tabId);
-    if (onTabChange) onTabChange(tabId); // send tab ID to parent
+    if (onTabChange) onTabChange(tabId); 
   };
 
   return (

@@ -23,6 +23,8 @@ interface TimerControlsProps {
   color: string;
   isMuted: boolean;
   onToggleMute: () => void;
+  runningIcon?: React.ReactNode;
+  runningLabel?: string;
 }
 
 export default function TimerControls({
@@ -36,6 +38,8 @@ export default function TimerControls({
   color,
   isMuted,
   onToggleMute,
+  runningIcon,
+  runningLabel,
 }: TimerControlsProps) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -88,9 +92,10 @@ export default function TimerControls({
             onClick={onPause}
             className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
             style={{ backgroundColor: color }}
-            aria-label="Pause timer"
+            aria-label={runningLabel || "Pause timer"}
+            title={runningLabel || "Pause timer"}
           >
-            <Pause className="w-8 h-8 text-white" fill="white" />
+            {runningIcon || <Pause className="w-8 h-8 text-white" fill="white" />}
           </button>
         )}
 

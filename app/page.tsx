@@ -1,5 +1,6 @@
 'use client';
 import PomodoroTimer from '@/components/PomodoroTimer';
+import FlowtimeTimer from '@/components/FlowtimeTimer';
 import TechniqueTabs from '@/components/TechniqueTabs';
 import { TECHNIQUES } from '@/lib/techniques';
 import { TechniqueType } from '@/types';
@@ -45,7 +46,11 @@ export default function FocusTimerApp() {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <PomodoroTimer data={selectedTechnique} />
+        {selectedTechnique.id === 'flowtime' ? (
+            <FlowtimeTimer data={selectedTechnique} />
+          ) : (
+            <PomodoroTimer data={selectedTechnique} />
+          )}
         </main>
       </div>
     </div>

@@ -9,6 +9,15 @@ export interface PomodoroSettings extends TechniqueSettings {
 }
 
 /**
+ * Flowtime settings interface
+ */
+export interface FlowtimeSettings extends TechniqueSettings {
+  autoCheckTasksOnCompletion: boolean;
+  breakRatio: number; // Ratio of work time to break time (e.g. 5 means 5 minutes work = 1 minute break)
+  useFixedBreak: boolean; // Whether to use a fixed break duration instead of ratio
+}
+
+/**
  * Default Pomodoro settings
  * All durations are stored in milliseconds
  */
@@ -22,6 +31,23 @@ export const DEFAULT_POMODORO_SETTINGS: PomodoroSettings = {
   autoStartBreaks: false,
   autoStartWork: false,
   autoCheckTasksOnCompletion: false,
+};
+
+/**
+ * Default Flowtime settings
+ */
+export const DEFAULT_FLOWTIME_SETTINGS: FlowtimeSettings = {
+  workDuration: 0, // Not used for flowtime limits, but good for initial state
+  shortBreakDuration: 5 * 60 * 1000, // Default break suggestion
+  longBreakDuration: 0,
+  initialLongBreakDuration: 0,
+  maxLongBreakDuration: 0,
+  cyclesBeforeLongBreak: 0,
+  autoStartBreaks: false,
+  autoStartWork: false,
+  autoCheckTasksOnCompletion: false,
+  breakRatio: 5,
+  useFixedBreak: false,
 };
 
 /**
